@@ -1,4 +1,0 @@
-{
-  "/src/**/*.{ts,tsx}": ["eslint"],
-  "/**/*.{ts,tsx}": ["eslint"]
-}
