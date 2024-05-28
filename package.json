@@ -13,19 +13,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"
-  },
-  "husky": {
-    "hooks": {
-      "precommit": "pnpm dlx lint-staged",
-      "commit-msg": "pnpm dlx husky git-push",
-      "prepush": "npm run lint"
-    }
   },
   "devDependencies": {
     "@types/node": "^20",
