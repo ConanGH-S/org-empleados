@@ -1,5 +1,3 @@
 {
-  "/src/**/*.{ts,tsx}": ["eslint"],
-  "*.{ts,tsx}": ["eslint"],
-  "*.tsx": ["eslint"]
+  "*.{ts,tsx}": ["eslint --fix"]
 }
