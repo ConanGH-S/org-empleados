@@ -1,3 +1,24 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals", "./node_modules/standard/eslintrc.json"],
+  "plugins": ["eslint-plugin-import-helpers"],
+  "rules": {
+    "import-helpers/order-imports": [
+      "warn",
+      {
+        "newlinesBetween": "always",
+        "groups": [
+          ["/^next/", "module"],
+          "/^@/styles/",
+          "/^@/components/",
+          "/^@/lib/",
+          ["parent", "sibling", "index"],
+          "/^.css/"
+        ],
+        "alphabetize": {
+          "order": "asc",
+          "ignoreCase": true
+        }
+      }
+    ]
+  }
 }
