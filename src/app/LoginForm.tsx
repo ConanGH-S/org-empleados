@@ -1,13 +1,13 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { EyeIcon } from 'lucide-react'
+import { EyeIcon, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -30,11 +30,14 @@ type TLoginFormSchema = z.infer<typeof loginFormSchema>
 
 export function LoginForm () {
   const [isPasswordInput, setIsPasswordInput] = useState<boolean>(true)
-
+  const [isSendingLogin, setIsSendingLogin] = useState<boolean>(false)
   const { toast } = useToast()
   const form = useForm<TLoginFormSchema>({ resolver: zodResolver(loginFormSchema) })
 
+  const loginButtonContent = isSendingLogin ? 'Enviando...' : 'Enviar'
+
   const onSubmit = (data: TLoginFormSchema): void => {
+    setIsSendingLogin(true)
     fetch('http://localhost:5088/login?useCookies=true&useSessionCookies=true', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -48,10 +51,12 @@ export function LoginForm () {
           loginRedirect()
         } else {
           toastError()
+          throw new Error('Login failed')
         }
       })
-      .catch((e) => {
-        console.error(e)
+      .catch((e: Error) => {
+        console.error(e.message)
+        setIsSendingLogin(false)
       })
   }
 
@@ -68,13 +73,13 @@ export function LoginForm () {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-        <Card className='max-w-md w-full mx-auto'>
-          <CardHeader>
-            <h1>Ingresa tus credenciales</h1>
-          </CardHeader>
-          <CardContent>
+    <Card className='max-w-md w-full mx-auto'>
+      <CardHeader>
+        <h1>Ingresa tus credenciales</h1>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField
               control={form.control}
               name='email'
@@ -95,7 +100,7 @@ export function LoginForm () {
                 <FormItem>
                   <FormLabel>Contraseña</FormLabel>
                   <FormControl>
-                    <div className='grid grid-cols-[1fr_auto]'>
+                    <div className='grid grid-cols-[1fr_auto] gap-1'>
                       <Input type={isPasswordInput ? 'password' : 'text'} placeholder='*****' {...field} />
                       <Button type='button' onClick={showPassword}><EyeIcon /></Button>
                     </div>
@@ -104,12 +109,13 @@ export function LoginForm () {
                 </FormItem>
               )}
             />
-          </CardContent>
-          <CardFooter>
-            <Button type='submit'>Submit</Button>
-          </CardFooter>
-        </Card>
-      </form>
-    </Form>
+            <Button type='submit' aria-disabled={isSendingLogin} disabled={isSendingLogin}>
+              {isSendingLogin ? (<Loader2 className='mr-2 h-4 w-4 animate-spin' />) : null}
+              <span>{loginButtonContent}</span>
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   )
 }

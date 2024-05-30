@@ -7,10 +7,10 @@ interface LayoutProps extends HTMLAttributes<HTMLDivElement> {
   layoutType: 'center' | 'default'
 }
 
-export default function Layout ({ children, layoutType = 'default', className, ...props }: LayoutProps) {
+export default function LayoutGrid ({ children, layoutType = 'default', className, ...props }: LayoutProps) {
   const layoutTypeClassName: Record<typeof layoutType, string> = {
-    center: 'h-dvh grid items-center',
-    default: 'h-dvh grid'
+    center: 'h-dvh grid items-center px-4',
+    default: 'h-dvh grid px-4'
   } as const
 
   type TLayoutTypeClassName = keyof typeof layoutTypeClassName

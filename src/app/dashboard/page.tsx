@@ -1,6 +1,11 @@
 import { cookies } from 'next/headers'
 
-async function fetchData () {
+import LayoutGrid from '@/components/core/Layout'
+
+import { Employee, columns } from './columns'
+import { DataTable } from './dataTable'
+
+async function fetchData (): Promise<Array<Employee>> {
   const cookieStore = cookies()
   const token = cookieStore.get('.AspNetCore.Identity.Application') // tiene la cookie
   const res = await fetch('http://localhost:5088/api/v1/Employee', {
@@ -16,15 +21,11 @@ async function fetchData () {
 }
 
 export default async function Page () {
-  const data: any[] = await fetchData()
+  const data = await fetchData()
+  console.log(data)
   return (
-    <div>
-      hola
-      {data.map((data: any) => {
-        return (
-          <p key={data.id}>Firstname {data.firstName}</p>
-        )
-      })}
-    </div>
+    <LayoutGrid layoutType='default' className='container mx-auto py-6 h-full'>
+      <DataTable columns={columns} data={data} />
+    </LayoutGrid>
   )
 }
