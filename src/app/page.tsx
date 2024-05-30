@@ -1,9 +1,17 @@
+import { Heart } from 'lucide-react'
+
+import Footer from '@/components/core/Footer'
+import Layout from '@/components/core/Layout'
+
 import { LoginForm } from './LoginForm'
 
 export default function Page () {
   return (
-    <main>
+    <Layout layoutType='center' className='grid-rows-[1fr_auto]'>
       <LoginForm />
-    </main>
+      <Footer className='flex justify-center border-t'>
+        <p className='flex gap-3'><span>Made by Stiven Blandon with</span> <Heart className='stroke-red-500' /></p>
+      </Footer>
+    </Layout>
   )
 }
