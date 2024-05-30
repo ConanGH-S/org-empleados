@@ -11,6 +11,8 @@ import {
   getPaginationRowModel,
   getFilteredRowModel
 } from '@tanstack/react-table'
+import { RotateCw } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -50,9 +52,11 @@ export function DataTable<TData, TValue> ({
     }
   })
 
+  const location = useRouter()
+
   return (
     <>
-      <div className='flex items-center py-4'>
+      <div className='flex justify-between py-4'>
         <Input
           placeholder='Filtrar nombres...'
           value={(table.getColumn('firstName')?.getFilterValue() as string) ?? ''}
@@ -60,6 +64,7 @@ export function DataTable<TData, TValue> ({
             table.getColumn('firstName')?.setFilterValue(event.target.value)}
           className='max-w-sm'
         />
+        <Button variant='ghost' onClick={() => { location.refresh() }} className='group'><RotateCw className='group-hover:animate-spin' /></Button>
       </div>
       <div className='rounded-md border'>
         <Table>

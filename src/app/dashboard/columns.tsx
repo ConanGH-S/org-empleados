@@ -5,6 +5,10 @@ import { ArrowUpDown, DeleteIcon, EditIcon, MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
+  Dialog,
+  DialogTrigger
+} from '@/components/ui/dialog'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -14,6 +18,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { cn } from '@/lib/utils'
+
+import EditEmployeeDialog from './editEmployeeDialog'
 
 export interface Employee {
   id: number
@@ -80,26 +86,34 @@ export const columns: ColumnDef<Employee>[] = [
       const employee = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
-              <MoreHorizontal className='h-4 w-4' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(`${employee.firstName} ${employee.lastName}`)}
-            >
-              Copiar nombre completo del empleado
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='ghost' className='h-8 w-8 p-0'>
+                <span className='sr-only'>Open menu</span>
+                <MoreHorizontal className='h-4 w-4' />
+              </Button>
+            </DropdownMenuTrigger>
 
-            <DropdownMenuItem className='text-yellow-500 flex justify-between'><span>Modificar empleado</span><EditIcon className='size-5' /></DropdownMenuItem>
-            <DropdownMenuItem className='text-red-500 flex justify-between'><span>Eliminar empleado</span><DeleteIcon className='size-5' /></DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(`${employee.firstName} ${employee.lastName}`)}
+              >
+                Copiar nombre completo del empleado
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+
+              <DialogTrigger asChild>
+                <DropdownMenuItem className='text-yellow-500 flex justify-between'><span>Editar empleado</span><EditIcon className='size-5' /></DropdownMenuItem>
+              </DialogTrigger>
+
+              <DropdownMenuItem className='text-red-500 flex justify-between'><span>Eliminar empleado</span><DeleteIcon className='size-5' /></DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <EditEmployeeDialog employee={employee} />
+        </Dialog>
       )
     }
   }

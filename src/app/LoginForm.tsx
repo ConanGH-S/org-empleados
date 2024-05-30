@@ -67,8 +67,9 @@ export function LoginForm () {
   const toastError = (): void => {
     toast({
       variant: 'destructive',
-      title: 'Uh oh! Something went wrong.',
-      description: 'There was a problem with your request.'
+      title: 'Credenciales incorrectas',
+      description: 'Compruebe su correo y/o contraseña.',
+      duration: 4000
     })
   }
 
