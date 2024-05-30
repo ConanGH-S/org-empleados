@@ -1,7 +1,7 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { DeleteIcon, EditIcon, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, DeleteIcon, EditIcon, MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -27,15 +27,45 @@ export interface Employee {
 export const columns: ColumnDef<Employee>[] = [
   {
     accessorKey: 'firstName',
-    header: 'Nombres'
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Nombres
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    }
   },
   {
     accessorKey: 'lastName',
-    header: 'Apellidos'
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Apelidos
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    }
   },
   {
     accessorKey: 'deletedAt',
-    header: 'Estado',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Estado
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
     cell: ({ row }) => {
       const { deletedAt } = row.original
       const employeeStatus = deletedAt === null ? 'Activo' : 'No activo' as const

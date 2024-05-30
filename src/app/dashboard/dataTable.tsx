@@ -4,6 +4,8 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  SortingState,
+  getSortedRowModel,
   useReactTable,
   ColumnFiltersState,
   getPaginationRowModel,
@@ -32,6 +34,7 @@ export function DataTable<TData, TValue> ({
   data
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
   const table = useReactTable({
     data,
     columns,
@@ -39,8 +42,11 @@ export function DataTable<TData, TValue> ({
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     state: {
-      columnFilters
+      columnFilters,
+      sorting
     }
   })
 
@@ -62,7 +68,7 @@ export function DataTable<TData, TValue> ({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className='text-center'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -84,7 +90,7 @@ export function DataTable<TData, TValue> ({
                       data-state={row.getIsSelected() && 'selected'}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
+                        <TableCell key={cell.id} className='text-center'>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
