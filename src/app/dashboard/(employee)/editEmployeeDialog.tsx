@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -29,10 +30,10 @@ export default function EditEmployeeDialog ({ employee }: EditEmployeeDialogProp
   const [isSendingLogin, setIsSendingLogin] = useState<boolean>(false)
 
   const form = useForm<TEditEmployeeSchema>({ resolver: zodResolver(editEmployeeSchema) })
+  const location = useRouter()
   const loginButtonContent = isSendingLogin ? 'Enviando...' : 'Enviar'
 
   const onSubmit = (data: TEditEmployeeSchema): void => {
-    console.log(data)
     setIsSendingLogin(true)
     fetch(`http://localhost:5088/api/v1/Employee/${employee.id}`, {
       method: 'PATCH',
@@ -43,15 +44,14 @@ export default function EditEmployeeDialog ({ employee }: EditEmployeeDialogProp
       credentials: 'include'
     })
       .then(() => {
-        setIsSendingLogin(false)
         toast({
           variant: 'default',
           title: 'Empleado actualizado con éxito',
           duration: 4000
         })
+        location.refresh()
       })
       .catch(error => {
-        setIsSendingLogin(false)
         console.error(error)
         toast({
           variant: 'destructive',
@@ -59,6 +59,9 @@ export default function EditEmployeeDialog ({ employee }: EditEmployeeDialogProp
           description: 'Ha ocurrido un error, inténtalo de nuevo',
           duration: 4000
         })
+      })
+      .finally(() => {
+        setIsSendingLogin(false)
       })
   }
 
@@ -74,7 +77,7 @@ export default function EditEmployeeDialog ({ employee }: EditEmployeeDialogProp
               control={form.control}
               name='firstName'
               render={({ field }) => (
-                <FormItem className='grid grid-cols-4 items-center gap-4'>
+                <FormItem>
                   <FormLabel className='text-right'>
                     Nombre
                   </FormLabel>
@@ -95,7 +98,7 @@ export default function EditEmployeeDialog ({ employee }: EditEmployeeDialogProp
               control={form.control}
               name='lastName'
               render={({ field }) => (
-                <FormItem className='grid grid-cols-4 items-center gap-4'>
+                <FormItem>
                   <FormLabel className='text-right'>
                     Apellidos
                   </FormLabel>
