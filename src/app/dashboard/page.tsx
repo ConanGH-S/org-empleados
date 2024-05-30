@@ -22,9 +22,9 @@ async function fetchData (): Promise<Array<Employee>> {
 
 export default async function Page () {
   const data = await fetchData()
-  console.log(data)
   return (
-    <LayoutGrid layoutType='default' className='container mx-auto py-6 h-full'>
+    <LayoutGrid layoutType='default' className='container mx-auto gap-4 py-6 h-full'>
+      <h2>Lista de empleados</h2>
       <DataTable columns={columns} data={data} />
     </LayoutGrid>
   )
