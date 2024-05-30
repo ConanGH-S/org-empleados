@@ -1,9 +1,10 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+
+import { loginRedirect } from '@/lib/actions'
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -13,7 +14,6 @@ const loginFormSchema = z.object({
 type TLoginFormSchema = z.infer<typeof loginFormSchema>
 
 export function LoginForm () {
-  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -30,7 +30,7 @@ export function LoginForm () {
       credentials: 'include'
     })
       .then(() => {
-        router.push('/dashboard')
+        loginRedirect()
       })
       .catch((e) => {
         console.error(e)
