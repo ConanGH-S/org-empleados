@@ -7,7 +7,14 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -19,28 +26,26 @@ import {
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 
-import { loginRedirect } from '@/lib/actions'
+const passwordRegex: Readonly<RegExp> = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$%*?&])[A-Za-z\d@$%*?&]{8,}$/
 
-import RegisterDialogForm from './RegisterDialogForm'
-
-const loginFormSchema = z.object({
+const registerFormSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8)
+  password: z.string().min(8).regex(passwordRegex, 'La contraseña debe tener 1 numero, mayuscula y carácter especial')
 })
 
-type TLoginFormSchema = z.infer<typeof loginFormSchema>
+type TRegisterFormSchema = z.infer<typeof registerFormSchema>
 
-export function LoginForm () {
+export default function RegisterDialogForm () {
   const [isPasswordInput, setIsPasswordInput] = useState<boolean>(true)
-  const [isSendingLogin, setIsSendingLogin] = useState<boolean>(false)
+  const [isSending, setisSending] = useState<boolean>(false)
   const { toast } = useToast()
-  const form = useForm<TLoginFormSchema>({ resolver: zodResolver(loginFormSchema) })
+  const form = useForm<TRegisterFormSchema>({ resolver: zodResolver(registerFormSchema) })
 
-  const loginButtonContent = isSendingLogin ? 'Enviando...' : 'Enviar'
+  const loginButtonContent = isSending ? 'Enviando...' : 'Enviar'
 
-  const onSubmit = (data: TLoginFormSchema): void => {
-    setIsSendingLogin(true)
-    fetch('http://localhost:5088/login?useCookies=true&useSessionCookies=true', {
+  const onSubmit = (data: TRegisterFormSchema): void => {
+    setisSending(true)
+    fetch('http://localhost:5088/register', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -50,7 +55,12 @@ export function LoginForm () {
     })
       .then((res) => {
         if (res.ok) {
-          loginRedirect()
+          toast({
+            variant: 'default',
+            title: 'Usuario registrado con éxito.',
+            duration: 4000
+          })
+          form.reset()
         } else {
           toastError()
           throw new Error('Login failed')
@@ -58,7 +68,9 @@ export function LoginForm () {
       })
       .catch((e: Error) => {
         console.error(e.message)
-        setIsSendingLogin(false)
+      })
+      .finally(() => {
+        setisSending(false)
       })
   }
 
@@ -76,11 +88,17 @@ export function LoginForm () {
   }
 
   return (
-    <Card className='max-w-md w-full mx-auto'>
-      <CardHeader>
-        <h1>Ingresa tus credenciales</h1>
-      </CardHeader>
-      <CardContent>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant='outline'>Regístrate</Button>
+      </DialogTrigger>
+      <DialogContent className='sm:max-w-[425px]'>
+        <DialogHeader>
+          <DialogTitle>Regístra tus credenciales</DialogTitle>
+          <DialogDescription>
+            Una vez lo hagas puedes cerrar esta ventana e iniciar sesión
+          </DialogDescription>
+        </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField
@@ -112,16 +130,13 @@ export function LoginForm () {
                 </FormItem>
               )}
             />
-            <Button type='submit' aria-disabled={isSendingLogin} disabled={isSendingLogin}>
-              {isSendingLogin ? (<Loader2 className='mr-2 h-4 w-4 animate-spin' />) : null}
+            <Button type='submit' aria-disabled={isSending} disabled={isSending}>
+              {isSending ? (<Loader2 className='mr-2 h-4 w-4 animate-spin' />) : null}
               <span>{loginButtonContent}</span>
             </Button>
           </form>
         </Form>
-      </CardContent>
-      <CardFooter className='flex justify-center border-t items-center p-6'>
-        <RegisterDialogForm />
-      </CardFooter>
-    </Card>
+      </DialogContent>
+    </Dialog>
   )
 }
