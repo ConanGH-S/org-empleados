@@ -23,3 +23,7 @@ export const isAuthenticated = (request: NextRequest): boolean => {
 export const loginRedirect = () => {
   redirect('/dashboard')
 }
+
+export const logoutRedirect = () => {
+  redirect('/')
+}

@@ -43,7 +43,6 @@ export function DataTable<TData, TValue> ({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
-  // const employeeSelectedStore = useEmployeeSelectedStore()
 
   const table = useReactTable({
     data,
@@ -65,7 +64,6 @@ export function DataTable<TData, TValue> ({
   const location = useRouter()
 
   const originalEmployees = table.getFilteredSelectedRowModel().flatRows.map(({ original }: any) => original.id)
-  console.log(originalEmployees)
 
   return (
     <>
