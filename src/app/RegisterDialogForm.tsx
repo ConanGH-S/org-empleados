@@ -81,8 +81,8 @@ export default function RegisterDialogForm () {
   const toastError = (): void => {
     toast({
       variant: 'destructive',
-      title: 'Credenciales incorrectas',
-      description: 'Compruebe su correo y/o contraseña.',
+      title: 'Ha ocurrido un error',
+      description: 'Cuenta existente',
       duration: 4000
     })
   }
