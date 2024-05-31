@@ -14,7 +14,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "",
-    "prepare": "husky || true"
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.4.2",
