@@ -81,7 +81,7 @@ export default function RegisterDialogForm () {
   const toastError = (): void => {
     toast({
       variant: 'destructive',
-      title: 'Ha ocurrido un error',
+      title: '¡Ha ocurrido un error!',
       description: 'Cuenta existente',
       duration: 4000
     })
