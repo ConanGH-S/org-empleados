@@ -55,10 +55,12 @@ export default function Navbar () {
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <Button variant='ghost' onClick={logout} aria-disabled={isSending} disabled={isSending}>{isSending ? (<Loader2 className='mr-2 h-4 w-4 animate-spin' />) : null}
+              <span>{loginButtonContent}</span>
+            </Button>
+          </NavigationMenuItem>
         </NavigationMenuList>
-        <Button onClick={logout} aria-disabled={isSending} disabled={isSending} className='absolute right-10'>{isSending ? (<Loader2 className='mr-2 h-4 w-4 animate-spin' />) : null}
-          <span>{loginButtonContent}</span>
-        </Button>
       </NavigationMenu>
     </header>
   )

@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 
 export async function GET (request: Request) {
   const cookieStore = cookies()
-  const token = cookieStore.get('.AspNetCore.Identity.Application') // tiene la cookie
+  const token = cookieStore.get('.AspNetCore.Identity.Application')
   console.log(`${token?.name}=${token?.value}`)
   try {
     const res = await fetch('http://localhost:5088/api/v1/Employee', {

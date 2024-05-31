@@ -1,6 +1,5 @@
 'use client'
 
-// import { useEmployeeSelectedStore } from '@/context/employeeGlobalStates'
 import {
   ColumnDef,
   flexRender,
@@ -37,7 +36,6 @@ import {
   TableRow
 } from '@/components/ui/table'
 
-// import { Employee } from './columns'
 import CreateEmployeeDialog from './createEmployeeDialog'
 import DeleteEmployeeDialog from './deleteEmployeeDialog'
 
@@ -121,32 +119,36 @@ export function DataTable<TData, TValue> ({
         {table.getFilteredSelectedRowModel().rows.length} de{' '}
         {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
       </div>
-      <div className='flex flex-col sm:flex-row justify-between py-4 gap-4'>
+      <div className='flex flex-col flex-wrap md:flex-row justify-between py-4 gap-4'>
         <Input
           placeholder='Filtrar nombres...'
           value={(table.getColumn('firstName')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('firstName')?.setFilterValue(event.target.value)}
-          className='max-w-sm'
+          className='max-w-sm mx-auto md:mx-0'
         />
-        <section className='flex flex-row justify-end sm:justify-center items-center
+        <section className='flex flex-col md:flex-row justify-end sm:justify-center items-center
          gap-3'
         >
-          <Select defaultValue='activo' onValueChange={(event) => changeFilter(event)}>
-            <SelectTrigger className='w-[180px]'>
-              <SelectValue placeholder='Selecciona el estado' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Estado</SelectLabel>
-                <SelectItem id='activo' value='activo'>activo</SelectItem>
-                <SelectItem id='inactivo' value='inactivo'>inactivo</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Button variant='ghost' onClick={() => { location.refresh() }} className='group'><RotateCw className='group-hover:animate-spin' /></Button>
-          <CreateEmployeeDialog />
-          <DeleteEmployeeDialog selectedEmployees={originalEmployees} />
+          <section className='flex gap-3'>
+            <Select defaultValue='activo' onValueChange={(event) => changeFilter(event)}>
+              <SelectTrigger className='w-[180px]'>
+                <SelectValue placeholder='Selecciona el estado' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Estado</SelectLabel>
+                  <SelectItem id='activo' value='activo'>activo</SelectItem>
+                  <SelectItem id='inactivo' value='inactivo'>inactivo</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Button variant='ghost' onClick={() => { location.refresh() }} className='group'><RotateCw className='group-hover:animate-spin' /></Button>
+          </section>
+          <section className='flex gap-3'>
+            <CreateEmployeeDialog />
+            <DeleteEmployeeDialog selectedEmployees={originalEmployees} />
+          </section>
         </section>
       </div>
       <ScrollArea className='whitespace-nowrap rounded-md border'>
