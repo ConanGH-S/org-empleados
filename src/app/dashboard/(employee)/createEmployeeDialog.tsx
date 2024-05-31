@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -20,11 +19,14 @@ const createEmployeeSchema = z.object({
 
 type TCreateEmployeeSchema = z.infer<typeof createEmployeeSchema>
 
-export default function CreateEmployeeDialog () {
+interface ICreateEmployeeDialogProps {
+  refreshData: () => void
+}
+
+export default function CreateEmployeeDialog ({ refreshData }: ICreateEmployeeDialogProps) {
   const [isSending, setIsSending] = useState<boolean>(false)
 
   const form = useForm<TCreateEmployeeSchema>({ resolver: zodResolver(createEmployeeSchema) })
-  const location = useRouter()
 
   const loginButtonContent = isSending ? 'Enviando...' : 'Enviar'
 
@@ -44,7 +46,7 @@ export default function CreateEmployeeDialog () {
           title: 'Empleado creado con éxito',
           duration: 4000
         })
-        location.refresh()
+        refreshData()
       })
       .catch(error => {
         console.error(error)

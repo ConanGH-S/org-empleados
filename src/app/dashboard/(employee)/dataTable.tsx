@@ -12,7 +12,6 @@ import {
   getFilteredRowModel
 } from '@tanstack/react-table'
 import { RotateCw } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -36,12 +35,13 @@ import {
   TableRow
 } from '@/components/ui/table'
 
+import { Fetch } from '@/lib/fetch'
+
 import CreateEmployeeDialog from './createEmployeeDialog'
 import DeleteEmployeeDialog from './deleteEmployeeDialog'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
-  data: TData[]
 }
 
 export function DataTable<TData, TValue> ({
@@ -49,19 +49,18 @@ export function DataTable<TData, TValue> ({
 }: DataTableProps<TData, TValue>) {
   const [data, setData] = useState<any[]>([])
 
-  useEffect(() => {
-    async function fetchData (): Promise<Array<TData[]>> {
-      const res = await fetch('http://localhost:5088/api/v1/Employee?activeEmployees=true', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
+  const updateDataTable = () => {
+    Fetch.employeeData(true)
+      .then(data => {
+        setData(data)
       })
-      const data = await res.json()
-      return data
-    }
-    fetchData()
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
+  useEffect(() => {
+    Fetch.employeeData(true)
       .then(data => {
         setData(data)
       })
@@ -109,8 +108,6 @@ export function DataTable<TData, TValue> ({
     }
   })
 
-  const location = useRouter()
-
   const originalEmployees = table.getFilteredSelectedRowModel().flatRows.map(({ original }: any) => original.id)
 
   return (
@@ -143,11 +140,11 @@ export function DataTable<TData, TValue> ({
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <Button variant='ghost' onClick={() => { location.refresh() }} className='group'><RotateCw className='group-hover:animate-spin' /></Button>
+            <Button variant='ghost' onClick={updateDataTable} className='group'><RotateCw className='group-hover:animate-spin' /></Button>
           </section>
           <section className='flex gap-3'>
-            <CreateEmployeeDialog />
-            <DeleteEmployeeDialog selectedEmployees={originalEmployees} />
+            <CreateEmployeeDialog refreshData={updateDataTable} />
+            <DeleteEmployeeDialog selectedEmployees={originalEmployees} refreshData={updateDataTable} />
           </section>
         </section>
       </div>

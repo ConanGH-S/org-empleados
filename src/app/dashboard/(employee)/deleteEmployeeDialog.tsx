@@ -1,7 +1,6 @@
 'use client'
 
 import { Loader2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -18,11 +17,11 @@ import { toast } from '@/components/ui/use-toast'
 
 interface DeleteEmployeeDialogProps {
   selectedEmployees: any[]
+  refreshData: () => void
 }
 
-export default function DeleteEmployeeDialog ({ selectedEmployees }: DeleteEmployeeDialogProps) {
+export default function DeleteEmployeeDialog ({ selectedEmployees, refreshData }: DeleteEmployeeDialogProps) {
   const [isSending, setIsSending] = useState<boolean>(false)
-  const location = useRouter()
 
   const isEmptySelectedEmployees = selectedEmployees.length === 0
   const ButtonContent = isSending ? 'Enviando...' : 'Enviar'
@@ -53,13 +52,13 @@ export default function DeleteEmployeeDialog ({ selectedEmployees }: DeleteEmplo
           })
       }
       setIsSending(false)
+      refreshData()
       toast({
         variant: 'default',
         title: 'Empleado(s) actualizado con éxito.',
         description: `Número afectado: ${selectedEmployees.length}`,
         duration: 4000
       })
-      location.refresh()
     } catch (error) {
       console.error(error)
       toast({
@@ -69,6 +68,7 @@ export default function DeleteEmployeeDialog ({ selectedEmployees }: DeleteEmplo
         duration: 4000
       })
       setIsSending(false)
+      refreshData()
     }
   }
 
