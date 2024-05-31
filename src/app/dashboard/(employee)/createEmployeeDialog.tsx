@@ -21,15 +21,15 @@ const createEmployeeSchema = z.object({
 type TCreateEmployeeSchema = z.infer<typeof createEmployeeSchema>
 
 export default function CreateEmployeeDialog () {
-  const [isSendingLogin, setIsSendingLogin] = useState<boolean>(false)
+  const [isSending, setIsSending] = useState<boolean>(false)
 
   const form = useForm<TCreateEmployeeSchema>({ resolver: zodResolver(createEmployeeSchema) })
   const location = useRouter()
 
-  const loginButtonContent = isSendingLogin ? 'Enviando...' : 'Enviar'
+  const loginButtonContent = isSending ? 'Enviando...' : 'Enviar'
 
   const onSubmit = (data: TCreateEmployeeSchema): void => {
-    setIsSendingLogin(true)
+    setIsSending(true)
     fetch('http://localhost:5088/api/v1/Employee', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -56,7 +56,7 @@ export default function CreateEmployeeDialog () {
         })
       })
       .finally(() => {
-        setIsSendingLogin(false)
+        setIsSending(false)
       })
   }
 
@@ -110,8 +110,8 @@ export default function CreateEmployeeDialog () {
               />
             </section>
             <DialogFooter>
-              <Button type='submit' aria-disabled={isSendingLogin} disabled={isSendingLogin}>
-                {isSendingLogin ? (<Loader2 className='mr-2 h-4 w-4 animate-spin' />) : null}
+              <Button type='submit' aria-disabled={isSending} disabled={isSending}>
+                {isSending ? (<Loader2 className='mr-2 h-4 w-4 animate-spin' />) : null}
                 <span>{loginButtonContent}</span>
               </Button>
             </DialogFooter>

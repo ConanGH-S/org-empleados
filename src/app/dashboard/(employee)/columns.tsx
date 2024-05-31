@@ -1,9 +1,10 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, DeleteIcon, EditIcon, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, EditIcon, MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogTrigger
@@ -31,6 +32,28 @@ export interface Employee {
 }
 
 export const columns: ColumnDef<Employee>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label='Select all'
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label='Select row'
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false
+  },
   {
     accessorKey: 'firstName',
     header: ({ column }) => {
@@ -107,8 +130,6 @@ export const columns: ColumnDef<Employee>[] = [
               <DialogTrigger asChild>
                 <DropdownMenuItem className='text-yellow-500 flex justify-between'><span>Editar empleado</span><EditIcon className='size-5' /></DropdownMenuItem>
               </DialogTrigger>
-
-              <DropdownMenuItem className='text-red-500 flex justify-between'><span>Eliminar empleado</span><DeleteIcon className='size-5' /></DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 

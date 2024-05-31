@@ -1,5 +1,6 @@
 'use client'
 
+// import { useEmployeeSelectedStore } from '@/context/employeeGlobalStates'
 import {
   ColumnDef,
   flexRender,
@@ -28,6 +29,7 @@ import {
 } from '@/components/ui/table'
 
 import CreateEmployeeDialog from './createEmployeeDialog'
+import DeleteEmployeeDialog from './deleteEmployeeDialog'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -40,6 +42,9 @@ export function DataTable<TData, TValue> ({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
+  const [rowSelection, setRowSelection] = useState({})
+  // const employeeSelectedStore = useEmployeeSelectedStore()
+
   const table = useReactTable({
     data,
     columns,
@@ -49,16 +54,25 @@ export function DataTable<TData, TValue> ({
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onRowSelectionChange: setRowSelection,
     state: {
       columnFilters,
-      sorting
+      sorting,
+      rowSelection
     }
   })
 
   const location = useRouter()
 
+  const originalEmployees = table.getFilteredSelectedRowModel().flatRows.map(({ original }: any) => original.id)
+  console.log(originalEmployees)
+
   return (
     <>
+      <div className='flex-1 text-sm text-muted-foreground'>
+        {table.getFilteredSelectedRowModel().rows.length} de{' '}
+        {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
+      </div>
       <div className='flex flex-col sm:flex-row justify-between py-4 gap-4'>
         <Input
           placeholder='Filtrar nombres...'
@@ -72,6 +86,7 @@ export function DataTable<TData, TValue> ({
         >
           <Button variant='ghost' onClick={() => { location.refresh() }} className='group'><RotateCw className='group-hover:animate-spin' /></Button>
           <CreateEmployeeDialog />
+          <DeleteEmployeeDialog selectedEmployees={originalEmployees} />
         </section>
       </div>
       <ScrollArea className='whitespace-nowrap rounded-md border'>
