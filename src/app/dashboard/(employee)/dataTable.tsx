@@ -14,11 +14,20 @@ import {
 } from '@tanstack/react-table'
 import { RotateCw } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -28,6 +37,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 
+// import { Employee } from './columns'
 import CreateEmployeeDialog from './createEmployeeDialog'
 import DeleteEmployeeDialog from './deleteEmployeeDialog'
 
@@ -37,9 +47,49 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue> ({
-  columns,
-  data
+  columns
 }: DataTableProps<TData, TValue>) {
+  const [data, setData] = useState<any[]>([])
+
+  useEffect(() => {
+    async function fetchData (): Promise<Array<TData[]>> {
+      const res = await fetch('http://localhost:5088/api/v1/Employee?activeEmployees=true', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+      const data = await res.json()
+      return data
+    }
+    fetchData()
+      .then(data => {
+        setData(data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [])
+
+  const changeFilter = (filter: string) => {
+    const filterSelected = filter === 'activo'
+    fetch(`http://localhost:5088/api/v1/Employee?activeEmployees=${filterSelected}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    })
+      .then(res => res.json())
+      .then(data => {
+        setData(data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
@@ -82,6 +132,18 @@ export function DataTable<TData, TValue> ({
         <section className='flex flex-row justify-end sm:justify-center items-center
          gap-3'
         >
+          <Select defaultValue='activo' onValueChange={(event) => changeFilter(event)}>
+            <SelectTrigger className='w-[180px]'>
+              <SelectValue placeholder='Selecciona el estado' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Estado</SelectLabel>
+                <SelectItem id='activo' value='activo'>activo</SelectItem>
+                <SelectItem id='inactivo' value='inactivo'>inactivo</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           <Button variant='ghost' onClick={() => { location.refresh() }} className='group'><RotateCw className='group-hover:animate-spin' /></Button>
           <CreateEmployeeDialog />
           <DeleteEmployeeDialog selectedEmployees={originalEmployees} />
